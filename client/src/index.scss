@@ -1,0 +1,368 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+:root {
+  --mainBlue: #68d8cf;
+  --darker-blue: rgb(14 165 233); //bg-sky-500
+  --bg: rgb(3 105 161); //bg-sky-700
+  --darker: rgb(12 74 110); //bg-sky-900
+  --lowOpacity: #7ddbfb54;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+}
+
+body {
+  position: relative;
+  overflow: hidden;
+  height: fit-content;
+  font-family: ui-sans-serif, system-ui, -apple-system, system-ui, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  background: rgb(0, 17, 66);
+  background: linear-gradient(
+    90deg,
+    rgb(0, 17, 66) 47%,
+    rgba(3, 105, 161, 1) 88%
+  );
+}
+
+.home-page {
+  &__bg-video {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__content {
+    text-align: center;
+
+    h1 {
+      font-size: 160px;
+      color: var(--mainBlue);
+      font-weight: 600;
+      transition: color 0.5s;
+      cursor: default;
+
+      &:hover {
+        color: transparent;
+        -webkit-text-stroke: 4px var(--mainBlue);
+      }
+    }
+  }
+
+  &__initialLoginBtn {
+    display: flex;
+    margin: 0 auto;
+    padding: 10px 20px;
+    color: var(--mainBlue) !important;
+    font-weight: 600;
+    letter-spacing: 2px;
+    background-color: transparent;
+    border-radius: 30px;
+    border: 3px solid var(--mainBlue) !important;
+    transition: all 0.5s ease-in-out;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(105%);
+      color: white;
+      border: 4px solid white;
+    }
+
+    p {
+      padding: 4px 5px;
+      font-size: 18px;
+    }
+
+    .material-symbols-outlined {
+      padding: 4px;
+      font-size: 28px;
+    }
+  }
+}
+
+@media (min-aspect-ratio: 16/9) {
+  .home-page__bg-video {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-aspect-ratio: 16/9) {
+  .home-page__bg-video {
+    width: auto;
+    height: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page__content {
+    h1 {
+      font-size: 70px;
+    }
+  }
+}
+
+// PAGE WRAPPER -
+#page-wrapper {
+  width: 100%;
+  height: 100vh;
+}
+
+#children {
+  scrollbar-width: none;
+}
+
+// NAVBAR -
+#navbar {
+  box-shadow: 0px 25px 79px -22px rgba(3, 105, 161, 1);
+}
+
+.logout-button {
+  background-color: var(--lowOpacity);
+  color: white;
+  padding: 2px 5px;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: var(--darker-blue);
+    color: black;
+  }
+}
+
+@media (max-width: 768px) {
+  #nav-links {
+    display: none;
+  }
+
+  #navbar-img {
+    display: none;
+  }
+
+  #navbar-links {
+    display: none;
+  }
+
+  .user-icon {
+    position: absolute;
+    right: 35px;
+  }
+
+  #mobile-menu-buttons {
+    position: absolute;
+    right: 5px;
+    display: block;
+  }
+}
+
+// SEARCH -
+.search-btn {
+  position: relative;
+  width: 120px;
+  height: 40px;
+  margin-top: 3px;
+  padding: 0 10px;
+  background-color: var(--lowOpacity);
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--darker-blue);
+  }
+}
+
+#search-form {
+  width: 200px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  margin-top: 3px;
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  #search-form {
+    display: none;
+  }
+}
+
+#search-field,
+#country-field {
+  width: 130px;
+  height: 40px;
+  border: none;
+  outline: none;
+  color: white;
+  background-color: var(--lowOpacity);
+  padding: 9px;
+  padding-right: 2px;
+  border-radius: 0 5px 5px 0;
+}
+
+@media (max-width: 768px) {
+  #search-form {
+    margin-left: 5px;
+  }
+}
+
+// TOP PLAY -
+@media (max-width: 768px) {
+  #top-play {
+    width: fit-content;
+  }
+
+  #top-charts {
+    width: 100%;
+    font-size: 10px;
+    padding-right: 22px;
+
+    &:hover {
+      background-color: var(--background);
+    }
+  }
+
+  #top-charts-text {
+    font-size: 13px;
+  }
+
+  .play-pause {
+    position: absolute;
+    right: 5px;
+  }
+}
+
+// DISCOVER -
+.custom-select {
+  position: relative;
+  background-color: var(--lowOpacity);
+  padding: 8px 10px;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--darker-blue);
+  }
+}
+
+@media (max-width: 768px) {
+  #discover-header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 25px 0;
+  }
+
+  #dis-header {
+    margin-bottom: 10px;
+  }
+}
+
+// CARDS -
+@media (max-width: 768px) {
+  #song-card,
+  #artist-card {
+    width: 140px;
+  }
+
+  #song-card-text,
+  #artist-card-text {
+    font-size: 14px;
+  }
+
+  #artist-card-img {
+    height: 120px;
+  }
+
+  #song-bar {
+    width: 100%;
+    margin: 0 -25px;
+  }
+}
+
+// ARTIST DETAILS -
+@media (max-width: 768px) {
+  #artist-detail {
+    position: relative;
+    width: 100%;
+  }
+}
+
+// RELATED SONGS -
+@media (max-width: 768px) {
+  #related-songs {
+    width: 250px;
+    text-align: center;
+  }
+}
+
+// PLAYLISTS -
+.playlists-container {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.playlistName {
+  font-size: 24px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--background);
+  }
+}
+
+.delete-song-playlist {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  z-index: 20;
+
+  &:hover {
+    color: red;
+  }
+}
+
+.dropdown-playlists {
+  padding: 5px 15px;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--darker);
+  }
+}
+
+.dropdown-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  background-color: var(--lowOpacity);
+  margin-top: 10px;
+  padding: 3px;
+
+  &::placeholder {
+    color: black;
+  }
+}

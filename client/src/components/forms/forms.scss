@@ -1,0 +1,108 @@
+.formContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.avatar {
+  display: flex;
+  margin: 0 auto;
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--mainBlue);
+  border-radius: 50%;
+}
+
+// LOGIN / SIGNUP -
+#email,
+#password,
+#confirmPassword,
+#name,
+#username {
+  background-color: transparent;
+  color: white;
+
+  ::placeholder {
+    color: white;
+  }
+}
+
+@media (max-width: 768px) {
+  #form {
+    background-color: #414141e4;
+  }
+
+  #all-inputs {
+    margin-top: -20px;
+  }
+
+  #first-input {
+    margin-top: 10px;
+  }
+}
+
+// Buttons -
+.submitBtn {
+  display: flex;
+  justify-content: center;
+  width: 70px;
+  margin: 0 auto;
+  padding: 5px;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 500;
+  background-color: var(--mainBlue) !important;
+  border: 0 solid white;
+
+  transform: rotate(-2deg);
+  cursor: pointer;
+}
+
+.submitBtn:focus {
+  outline: 0;
+}
+
+.submitBtn:after {
+  content: "";
+  position: absolute;
+  border: 2px solid white;
+  bottom: 6px;
+  left: 6px;
+  width: calc(100% - 1px);
+  height: calc(100% - 1px);
+}
+
+.submitBtn:hover:after {
+  bottom: 2px;
+  left: 2px;
+  box-shadow: rgba(0, 0, 0, 0.633) 0px 20px 30px -10px;
+}
+
+.linkBtn {
+  width: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  margin-top: 40px;
+  border: 2px solid red;
+  background-color: transparent;
+  border: none;
+  text-decoration: underline;
+  color: var(--mainBlue);
+  letter-spacing: 1px;
+
+  transition: all 0.5s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    color: white;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .submitBtn {
+    padding: 10px 30px;
+    font-size: 20px;
+  }
+}
