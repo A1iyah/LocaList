@@ -4,7 +4,7 @@ const DetailsHeader = ({ artistId, artistData, songData }: any) => (
   <div className="relative w-full flex flex-col">
     <div className="w-full h-28" />
 
-    <div className="absolute inset-0 flex items-center">
+    <div className=" inset-0 flex items-center">
       <img
         alt="profile"
         src={
@@ -36,7 +36,16 @@ const DetailsHeader = ({ artistId, artistData, songData }: any) => (
       </div>
     </div>
 
-    <div className="w-full sm:h-44 h-24" />
+    {artistData?.attributes?.artistBio && (
+      <div className="my-10">
+        <h3 className="text-2xl font-semibold text-white">Biography</h3>
+        <p className="mt-4 text-lg text-gray-300">
+          {artistData.attributes.artistBio}
+        </p>
+      </div>
+    )}
+
+    <div className="w-full sm:h-30 h-24" />
   </div>
 );
 

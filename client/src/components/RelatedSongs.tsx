@@ -7,9 +7,7 @@ const RelatedSongs = ({ data, artistId }: any) => {
 
   return (
     <div className="flex flex-col">
-      <h1 className="font-bold text-3xl text-white" id="related-songs">
-        Related Songs :
-      </h1>
+      <h3 className="text-2xl font-semibold text-white">Related Songs:</h3>
 
       <div className="mt-6 w-full flex flex-col mb-[100px] animate-slideup">
         {data?.map((song: any, i: any) => (

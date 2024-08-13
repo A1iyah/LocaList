@@ -1,12 +1,12 @@
 import express from "express";
-import upload from "./utils/file_upload";
 import { loginUser, registerUser } from "./controllers/users";
+import upload from "./utils/file_upload";
 import {
-  getCountry,
-  getSongs,
-  getGenre,
   getArtistDetails,
+  getCountry,
+  getGenre,
   getSearch,
+  getSongs,
 } from "./controllers/songs";
 import {
   addNewPlaylist,
@@ -20,6 +20,7 @@ import {
 const router = express.Router();
 
 router
+  .post("/", loginUser)
   .post("/signup", upload.single("image"), registerUser)
   .post("/login", loginUser)
   .get("/get-songs", getSongs)

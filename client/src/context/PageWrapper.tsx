@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
-import TopPlay from "../components/TopPlay";
+// import TopPlay from "../components/TopPlay";
 import MusicPlayer from "../components/musicPlayer/MusicPlayer";
 
 const PageWrapper = ({ children }: any) => {
@@ -17,13 +17,13 @@ const PageWrapper = ({ children }: any) => {
         >
           {children}
 
-          <div className="xl:sticky relative top-0 h-fit" id="top-play">
+          {/* <div className="xl:sticky relative top-0 h-fit" id="top-play">
             <TopPlay />
-          </div>
+          </div> */}
         </div>
       </div>
 
-      {activeSong?.title && (
+      {activeSong?.id && (
         <div className="absolute h-28 bottom-0 left-0 right-0 flex animate-slideup bg-gradient-to-br from-white/20 to-sky-700 backdrop-blur-lg rounded-t-3xl z-50">
           <MusicPlayer />
         </div>

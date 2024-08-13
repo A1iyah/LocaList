@@ -1,3 +1,8 @@
+# DISCLAIMER -
+
+search engines not working as of yet due to RapidApi changes.
+THIS VERSION IS NOT FINAL.
+
 # Run client locally:
 
 1. `cd client` then run `npm i`

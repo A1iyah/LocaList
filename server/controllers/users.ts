@@ -89,6 +89,6 @@ export const loginUser = async (
       res.status(401).send("Bad email and password combination");
     }
   } catch (err) {
-    res.status(500).render("internal-error");
+    res.status(500).send("internal-error");
   }
 };

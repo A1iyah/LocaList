@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { axiosClient } from "../utils/apiClient";
 import { genres } from "../utils/constants";
 import { selectGenreListId } from "../utils/playerSlice";
+import PageWrapper from "../context/PageWrapper";
 import SongCard from "../components/SongCard";
 import PlaylistDropdown from "../components/PlaylistDropdown";
 import Loader from "../utils/Loader";
@@ -23,7 +24,10 @@ const Discover = () => {
       setIsFetching(true);
 
       try {
-        const response = await axiosClient.get(`/get-songs`);
+        const response = await axiosClient.get(`/get-songs`, {
+          params: { country_code: "US" },
+        });
+
         setData(response.data);
         setIsFetching(false);
       } catch (error) {
@@ -60,50 +64,59 @@ const Discover = () => {
 
   return (
     <>
-      <div className="w-full">
-        <div
-          className="w-full flex justify-between items-center flex-row mt-10 mb-10"
-          id="discover-header"
-        >
-          <h2 className="text-4xl text-left font-thin md:ml-10" id="dis-header">
-            Discover {genreTitle}
-          </h2>
-
-          <select
-            onChange={(e) => {
-              const selectedGenre = e.target.value;
-              setGenreCode(selectedGenre);
-              dispatch(selectGenreListId(selectedGenre));
-            }}
-            value={genreCode || ""}
-            className="custom-select"
+      <PageWrapper>
+        <div className="w-full">
+          <div
+            className="w-full flex justify-between items-center flex-row mt-10 mb-10"
+            id="discover-header"
           >
-            <option value="">Select Genre</option>
+            <h2
+              className="text-4xl text-left font-thin md:ml-10"
+              id="dis-header"
+            >
+              Discover {genreTitle}
+            </h2>
 
-            {genres.map((genre) => (
-              <option key={genre.value} value={genre.value}>
-                {genre.title}
-              </option>
+            <select
+              onChange={(e) => {
+                const selectedGenre = e.target.value;
+                setGenreCode(selectedGenre);
+                dispatch(selectGenreListId(selectedGenre));
+              }}
+              value={genreCode || ""}
+              className="custom-select"
+            >
+              <option value="">Select Genre</option>
+
+              {genres.map((genre) => (
+                <option key={genre.value} value={genre.value}>
+                  {genre.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-8 pb-28 animate-slideup">
+            {data?.map((song: any, i: any) => (
+              <div key={`searchResult_${song.key}_${i}`}>
+                <PlaylistDropdown
+                  key={`playlist_${song.key}_${i}`}
+                  song={song}
+                />
+
+                <SongCard
+                  key={`song_${song.key}_${i}`}
+                  song={song}
+                  i={i}
+                  isPlaying={isPlaying}
+                  activeSong={activeSong}
+                  data={data}
+                />
+              </div>
             ))}
-          </select>
+          </div>
         </div>
-
-        <div className="flex flex-wrap justify-center gap-8 pb-28">
-          {data?.map((song: any, i: any) => (
-            <div key={`searchResult_${song.key}_${i}`}>
-              <PlaylistDropdown key={`playlist_${song.key}_${i}`} song={song} />
-              <SongCard
-                key={`song_${song.key}_${i}`}
-                song={song}
-                i={i}
-                isPlaying={isPlaying}
-                activeSong={activeSong}
-                data={data}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+      </PageWrapper>
     </>
   );
 };

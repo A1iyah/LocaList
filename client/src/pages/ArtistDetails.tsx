@@ -5,6 +5,7 @@ import { axiosClient } from "../utils/apiClient";
 import PageWrapper from "../context/PageWrapper";
 import DetailsHeader from "../components/DetailsHeader";
 import RelatedSongs from "../components/RelatedSongs";
+
 import Loader from "../utils/Loader";
 import Error from "../utils/Error";
 

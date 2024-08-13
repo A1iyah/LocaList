@@ -1,71 +1,46 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import { axiosClient } from "../utils/apiClient";
 import PageWrapper from "../context/PageWrapper";
-import SongCard from "../components/SongCard";
-import PlaylistDropdown from "../components/PlaylistDropdown";
+import ArtistCard from "../components/ArtistCard";
 import Loader from "../utils/Loader";
 import Error from "../utils/Error";
 
-const Search = () => {
-  const { searchTerm } = useParams();
-  const { activeSong, isPlaying } = useSelector((state: any) => state.player);
-  const [searchData, setSearchData] = useState<any[]>([]);
-
+const TopArtists = () => {
+  const [data, setData] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchArtistDetails = async () => {
+    const fetchSongs = async () => {
       setIsFetching(true);
 
       try {
-        const response = await axiosClient.get(`/search`, {
-          params: {
-            searchTerm,
-          },
-        });
+        const response = await axiosClient.get(`/get-songs`);
 
-        setSearchData(response.data.tracks.hits);
-
+        setData(response.data);
         setIsFetching(false);
       } catch (error) {
-        setError("Error fetching artist details");
+        setError("Error fetching songs");
         setIsFetching(false);
       }
     };
 
-    if (searchTerm) {
-      fetchArtistDetails();
-    }
-  }, [searchTerm]);
+    fetchSongs();
+  }, []);
 
-  if (isFetching) return <Loader title={`Searching for - ${searchTerm}`} />;
+  if (isFetching) return <Loader title="Loading Top Artists..." />;
   if (error) return <Error />;
 
   return (
     <PageWrapper>
-      <div className="w-full" id="search-page">
+      <div className="w-full">
         <h2 className="text-4xl text-left font-thin ml-10 mb-10 mt-10">
-          Showing results for -
-          <span className="text-3xl pl-2">" {searchTerm} "</span>
+          Top Artists
         </h2>
 
         <div className="flex flex-wrap justify-center gap-8 pb-28 animate-slideup">
-          {searchData.map((song: any, i: any) => (
-            <div key={`searchResult_${song.key}_${i}`}>
-              <PlaylistDropdown key={`playlist_${song.key}_${i}`} song={song} />
-
-              <SongCard
-                key={`song_${song.key}_${i}`}
-                song={song.track || song}
-                i={i}
-                isPlaying={isPlaying}
-                activeSong={activeSong}
-                data={searchData}
-              />
-            </div>
+          {data?.map((track: any) => (
+            <ArtistCard key={`${track.key}-${track.id}`} track={track} />
           ))}
         </div>
       </div>
@@ -73,4 +48,4 @@ const Search = () => {
   );
 };
 
-export default Search;
+export default TopArtists;

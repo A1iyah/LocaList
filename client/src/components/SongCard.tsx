@@ -6,9 +6,12 @@ import {
 } from "../utils/playerSlice";
 import { Link } from "react-router-dom";
 import PlayPause from "./PlayPause";
+import { getSongDetails } from "../utils/songDetails";
 
 const SongCard = ({ song, isPlaying, activeSong, data, i }: any) => {
   const dispatch = useDispatch();
+
+  const { coverArtUrl, songTitle, artistName } = getSongDetails(song);
 
   const handlePlayClick = () => {
     if (data.songs) {
@@ -28,7 +31,7 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }: any) => {
       <div className="relative w-full h-66 group">
         <div
           className={`absolute inset-0 justify-center items-center bg-black bg-opacity-60 group-hover:flex ${
-            activeSong?.title === song.title
+            activeSong?.attributes?.name === songTitle
               ? "flex bg-black bg-opacity-70"
               : "hidden"
           }`}
@@ -42,8 +45,8 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }: any) => {
           />
         </div>
 
-        {song.images?.coverart ? (
-          <img alt="song_img" src={song.images.coverart} />
+        {coverArtUrl ? (
+          <img alt="song_img" src={coverArtUrl} />
         ) : (
           <img alt="song_img" src="/vinyl.png" />
         )}
@@ -52,16 +55,16 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }: any) => {
       <div className="mt-4 flex flex-col cursor-pointer">
         <Link
           to={
-            song.artists && song.artists.length > 0
-              ? `/artists/${song.artists[0].adamid}`
+            song.relationships?.artists?.data[0]?.id
+              ? `/artists/${song.relationships.artists.data[0].id}`
               : "/top-artists"
           }
         >
           <p className="font-semibold text-lg text-white truncate">
-            {song.title}
+            {songTitle}
           </p>
 
-          <p className="text-sm truncate text-gray-300 mt-1">{song.subtitle}</p>
+          <p className="text-sm truncate text-gray-300 mt-1">{artistName}</p>
         </Link>
       </div>
     </div>
