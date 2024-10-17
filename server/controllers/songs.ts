@@ -23,7 +23,7 @@ export const getSongs = async (req: express.Request, res: express.Response) => {
       params: { country_code },
     });
 
-    const limitedSongs = response.data.slice(0, 50);
+    const limitedSongs = response.data.slice(0, 30);
 
     res.json(limitedSongs);
   } catch (error) {
@@ -46,7 +46,7 @@ export const getGenre = async (req: express.Request, res: express.Response) => {
       {}
     );
 
-    const limitedSongs = response.data.slice(0, 50);
+    const limitedSongs = response.data.slice(0, 30);
 
     res.json(limitedSongs);
   } catch (error) {
@@ -71,7 +71,7 @@ export const getCountry = async (
       params: { country_code },
     });
 
-    const limitedSongs = response.data.slice(0, 50);
+    const limitedSongs = response.data.slice(0, 30);
 
     res.json(limitedSongs);
   } catch (error) {

@@ -6,7 +6,7 @@ const CountrySearchBar = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSubmit = (evt: any) => {
+  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     const country = countries.find(
@@ -16,11 +16,10 @@ const CountrySearchBar = () => {
     if (!country) {
       alert("Country not found");
       return;
-    } else {
-      console.log("search bar", country);
-
-      navigate(`/country/${country.code}`);
     }
+
+    console.log("search bar", country);
+    navigate(`/country/${country.code}`);
   };
 
   return (
@@ -35,7 +34,6 @@ const CountrySearchBar = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
         <button
           type="submit"
           className="ml-2 hover:text-mainBlue text-white font-bold py-2 px-4 rounded"

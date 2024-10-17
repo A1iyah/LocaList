@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import { links } from "../utils/constants";
 import CountrySearchBar from "./CountrySearchBar";
-import SearchBar from "./SearchBar";
+import SongSearch from "./SongSearch";
 
 import { RiCloseLine } from "react-icons/ri";
 import { HiOutlineMenu } from "react-icons/hi";
@@ -72,7 +72,7 @@ const Navbar = () => {
             </option>
           </select>
 
-          {searchType === "country" ? <CountrySearchBar /> : <SearchBar />}
+          {searchType === "country" ? <CountrySearchBar /> : <SongSearch />}
         </div>
 
         <div className="absolute right-5 top-3">

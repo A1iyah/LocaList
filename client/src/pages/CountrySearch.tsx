@@ -46,8 +46,9 @@ const CountrySearch = () => {
     <PageWrapper>
       <div className="w-full" id="search-page">
         <h2 className="text-4xl text-left font-thin ml-10 mb-10 mt-10">
-          Showing results for -
-          <span className="text-3xl pl-2">"{countryCode}"</span>
+          Popular
+          <span className="text-3xl pl-2"> {countryCode} </span>
+          Songs
         </h2>
 
         <div className="flex flex-wrap justify-center gap-8 pb-28 animate-slideup">
