@@ -104,10 +104,8 @@ const PlaylistsPage = () => {
 
       showMessage("Playlist Deleted.");
 
-      // Fetch the playlists again to check if any are left
       await fetchPlaylists();
 
-      // If no playlists are left, reset the state
       if (playlists.length === 0) {
         setPlaylists([]);
       }
@@ -122,6 +120,10 @@ const PlaylistsPage = () => {
     navigate(`/playlistsDetails/${playlistId}`);
   };
 
+  const handleReturn = () => {
+    navigate("/discover");
+  };
+
   const closeWindow = () => {
     setShowCreateForm(false);
   };
@@ -134,7 +136,14 @@ const PlaylistsPage = () => {
       <PageWrapper>
         <div className="relative w-full text-white">
           <div className="justify-between items-center  flex-row mt-10 mb-10">
-            <h2 className="text-4xl text-left font-thin md:ml-10">Playlists</h2>
+            <h2 className="text-4xl text-left font-thin md:ml-10">
+              <button onClick={handleReturn}>
+                <span className="material-symbols-outlined hover:text-[--mainBlue] transform hover:scale-110">
+                  arrow_back_ios
+                </span>
+              </button>
+              Playlists
+            </h2>
 
             <button
               onClick={() => setShowCreateForm(true)}
@@ -152,7 +161,7 @@ const PlaylistsPage = () => {
                   >
                     <div
                       onClick={() => moveToPlaylistDetails(playlist.playlistId)}
-                      className="relative w-full flex flex-row hover:bg-darkerBlue bg-darker py-2 p-4 rounded-lg cursor-pointer mb-2"
+                      className="playlist-item relative w-full flex flex-row hover:bg-darkerBlue bg-darker py-2 p-4 rounded-lg cursor-pointer mb-2"
                     >
                       <button
                         className="hover:text-red pr-10 z-50"
@@ -168,7 +177,7 @@ const PlaylistsPage = () => {
                   </div>
                 ))
               ) : (
-                <p>No playlists available.</p>
+                <p>No Playlists Yet.</p>
               )}
             </div>
           </div>

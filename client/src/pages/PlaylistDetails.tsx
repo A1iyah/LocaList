@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { axiosClient } from "../utils/apiClient";
 import { MdOutlineDeleteForever } from "react-icons/md";
@@ -10,6 +10,7 @@ import Error from "../utils/Error";
 
 const PlaylistDetails = () => {
   const { playlistId } = useParams();
+  const navigate = useNavigate();
   const { activeSong, isPlaying } = useSelector((state: any) => state.player);
   const [playlist, setPlaylist]: any = useState(null);
   const [message, setMessage] = useState("");
@@ -29,6 +30,7 @@ const PlaylistDetails = () => {
         const { data } = await axiosClient.get(`/playlist/${playlistId}`);
 
         setPlaylist(data);
+        console.log("Fetched playlist:", data);
       } catch (err) {
         setError("Failed to fetch playlist details");
       } finally {
@@ -42,18 +44,37 @@ const PlaylistDetails = () => {
   }, [playlistId]);
 
   const handleDeleteSong = async (songId: any) => {
-    try {
-      await axiosClient.delete(`/playlist/${playlistId}/song/${songId}`);
+    console.log("Deleting song:", songId, "from playlist:", playlistId);
 
-      const updatedSongs = playlist.songs.filter(
-        (song: any) => song.key !== songId
+    if (!songId) {
+      console.error("No song ID provided for deletion.");
+      return;
+    }
+
+    try {
+      const response = await axiosClient.delete(
+        `/playlist/${playlistId}/song/${songId}`,
+        {
+          params: { songId },
+        }
       );
 
-      showMessage("Song Was Deleted.");
-      setPlaylist({ ...playlist, songs: updatedSongs });
+      if (response.status === 200) {
+        const { data } = await axiosClient.get(`/playlist/${playlistId}`);
+
+        setPlaylist(data);
+        showMessage("Song was deleted.");
+      } else {
+        setError("Failed to delete song. Please try again.");
+      }
     } catch (error) {
-      console.log("Error deleting a song from playlist: ", error);
+      console.error("Error deleting a song from playlist: ", error);
+      setError("Failed to delete song. Please try again.");
     }
+  };
+
+  const handleReturn = () => {
+    navigate("/playlists");
   };
 
   if (loading) return <Loader title="Loading songs..." />;
@@ -63,6 +84,11 @@ const PlaylistDetails = () => {
     <PageWrapper>
       <div className="w-full">
         <h2 className="text-4xl text-left font-thin md:ml-10 my-10">
+          <button onClick={handleReturn}>
+            <span className="material-symbols-outlined hover:text-[--mainBlue] transform hover:scale-110">
+              arrow_back_ios
+            </span>
+          </button>
           {playlist.playlistName}
         </h2>
 
@@ -70,19 +96,19 @@ const PlaylistDetails = () => {
           {playlist &&
             playlist.songs.map((song: any, index: any) => (
               <div
-                key={`searchResult_${song.key}_${index}`}
+                key={`searchResult_${song.id}_${index}`}
                 className="relative animate-slideup"
               >
                 <button
-                  key={`delete_${song.key}_${index}`}
-                  onClick={() => handleDeleteSong(song.key)}
+                  key={`delete_${song.id}_${index}`}
+                  onClick={() => handleDeleteSong(song.id)}
                   className="delete-song-playlist"
                 >
                   <MdOutlineDeleteForever size={24} />
                 </button>
 
                 <SongCard
-                  key={`song_${song.key}_${index}`}
+                  key={`song_${song.id}_${index}`}
                   song={song}
                   i={index}
                   isPlaying={isPlaying}

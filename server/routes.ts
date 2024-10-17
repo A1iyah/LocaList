@@ -28,7 +28,7 @@ router
   .get("/around-you", getCountry)
   .get("/genre-code", getGenre)
   .get("/artist-details", getArtistDetails)
-  .get("/search", getSearch)
+  .get("/song", getSearch)
   .get("/country", getCountry)
   .get("/getPlaylists", getPlaylists)
   .get("/playlist/:playlistId", getPlaylistDetails)

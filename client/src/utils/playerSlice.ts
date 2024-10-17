@@ -53,6 +53,7 @@ const playerSlice = createSlice({
 
       state.currentIndex = action.payload.i;
       state.isActive = true;
+      state.isPlaying = true;
     },
 
     nextSong: (state) => {

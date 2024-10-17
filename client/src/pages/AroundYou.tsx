@@ -7,8 +7,10 @@ import SongCard from "../components/SongCard";
 import PlaylistDropdown from "../components/PlaylistDropdown";
 import Loader from "../utils/Loader";
 import Error from "../utils/Error";
+import { useNavigate } from "react-router-dom";
 
 const AroundYou = () => {
+  const navigate = useNavigate();
   const { activeSong, isPlaying } = useSelector((state: any) => state.player);
   const [country, setCountry] = useState("");
   const [data, setData] = useState([]);
@@ -48,6 +50,10 @@ const AroundYou = () => {
     }
   }, [country]);
 
+  const handleReturn = () => {
+    navigate("/discover");
+  };
+
   if (isFetching) return <Loader title="Loading Songs Around You..." />;
   if (error) return <Error />;
 
@@ -55,6 +61,11 @@ const AroundYou = () => {
     <PageWrapper>
       <div className="w-full">
         <h2 className="text-4xl text-left font-thin ml-10 mt-10 mb-10">
+          <button onClick={handleReturn}>
+            <span className="material-symbols-outlined hover:text-[--mainBlue] transform hover:scale-110">
+              arrow_back_ios
+            </span>
+          </button>
           Around You - <span className="text-3xl">{country}</span>
         </h2>
 

@@ -6,7 +6,7 @@ import Home from "./pages/Home";
 import Discover from "./pages/Discover";
 import AroundYou from "./pages/AroundYou";
 // import TopArtists from "./pages/TopArtists";
-import Search from "./pages/Search";
+import SongSearch from "./pages/SongSearch";
 import CountrySearch from "./pages/CountrySearch";
 import PlaylistPage from "./pages/PlaylistsPage";
 import ArtistDetails from "./pages/ArtistDetails";
@@ -50,7 +50,7 @@ function App() {
               element={<PlaylistDetails />}
             />
 
-            <Route path="/search/:searchTerm" element={<Search />} />
+            <Route path="/song/:searchTerm" element={<SongSearch />} />
             <Route path="/country/:countryCode" element={<CountrySearch />} />
           </Routes>
         </BrowserRouter>

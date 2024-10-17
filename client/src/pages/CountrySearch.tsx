@@ -47,7 +47,7 @@ const CountrySearch = () => {
       <div className="w-full" id="search-page">
         <h2 className="text-4xl text-left font-thin ml-10 mb-10 mt-10">
           Popular
-          <span className="text-3xl pl-2"> {countryCode} </span>
+          <span className="text-4xl pl-2"> {countryCode} </span>
           Songs
         </h2>
 

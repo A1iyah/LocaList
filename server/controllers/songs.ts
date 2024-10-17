@@ -123,9 +123,8 @@ export const getSearch = async (
       {}
     );
 
-    const limitedSongs = response.data.slice(0, 50);
-
-    res.json(limitedSongs);
+    const limitedSongs = response.data.tracks.hits || [];
+    res.json(limitedSongs.slice(0, 30));
   } catch (error) {
     console.error("Error fetching genre:", error);
     res.status(500).send({ error: "Internal Server Error" });

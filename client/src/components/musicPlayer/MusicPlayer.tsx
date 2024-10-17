@@ -51,10 +51,9 @@ const MusicPlayer = () => {
     } else {
       let randomIndex = currentIndex;
 
-      while (randomIndex === currentIndex) {
+      do {
         randomIndex = Math.floor(Math.random() * currentSongs.length);
-      }
-
+      } while (randomIndex === currentIndex);
       dispatch(nextSong(randomIndex));
     }
   };

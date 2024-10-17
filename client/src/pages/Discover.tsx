@@ -105,7 +105,7 @@ const Discover = () => {
                 />
 
                 <SongCard
-                  key={`song_${song.key}_${i}`}
+                  key={`song_${song.key}_${i}_${song.id}`}
                   song={song}
                   i={i}
                   isPlaying={isPlaying}

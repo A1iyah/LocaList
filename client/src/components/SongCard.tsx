@@ -6,12 +6,14 @@ import {
 } from "../utils/playerSlice";
 import { Link } from "react-router-dom";
 import PlayPause from "./PlayPause";
-import { getSongDetails } from "../utils/songDetails";
+import { getDifferentSongDetails, getSongDetails } from "../utils/songDetails";
 
 const SongCard = ({ song, isPlaying, activeSong, data, i }: any) => {
   const dispatch = useDispatch();
 
-  const { coverArtUrl, songTitle, artistName } = getSongDetails(song);
+  const { coverArtUrl, songTitle, artistName, songKey } = song.track
+    ? getDifferentSongDetails(song)
+    : getSongDetails(song);
 
   const handlePlayClick = () => {
     if (data.songs) {
@@ -19,6 +21,7 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }: any) => {
     } else {
       dispatch(setActiveSong({ song, data, i }));
     }
+
     dispatch(playPause(true));
   };
 
@@ -53,17 +56,11 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }: any) => {
       </div>
 
       <div className="mt-4 flex flex-col cursor-pointer">
-        <Link
-          to={
-            song.relationships?.artists?.data[0]?.id
-              ? `/artists/${song.relationships.artists.data[0].id}`
-              : "/top-artists"
-          }
-        >
+        <Link to={`/songs/${songKey}`}>
+          {" "}
           <p className="font-semibold text-lg text-white truncate">
             {songTitle}
           </p>
-
           <p className="text-sm truncate text-gray-300 mt-1">{artistName}</p>
         </Link>
       </div>

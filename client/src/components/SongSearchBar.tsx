@@ -1,17 +1,21 @@
-import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import "../index.css";
 
-const SongSearch = () => {
+const SongSearchBar = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
-    navigate(`/search/${searchTerm}`);
+    if (searchTerm) {
+      navigate(`/song/${searchTerm}`);
+    } else {
+      alert("Please enter a search term");
+    }
   };
+
+  console.log("Search term before navigating:", searchTerm);
 
   return (
     <form onSubmit={handleSubmit} className="mt-3" id="search-form">
@@ -37,4 +41,4 @@ const SongSearch = () => {
   );
 };
 
-export default SongSearch;
+export default SongSearchBar;

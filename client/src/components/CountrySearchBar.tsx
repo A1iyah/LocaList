@@ -24,7 +24,7 @@ const CountrySearchBar = () => {
 
   return (
     <form onSubmit={handleSubmit} className="mt-3" id="search-form">
-      <div className="flex flex-row justify-start items-center">
+      <div className="flex flex-row justify-start">
         <input
           name="country-field"
           id="country-field"
@@ -36,7 +36,7 @@ const CountrySearchBar = () => {
         />
         <button
           type="submit"
-          className="ml-2 hover:text-mainBlue text-white font-bold py-2 px-4 rounded"
+          className="ml-2 hover:text-mainBlue text-white font-bold pt-1 px-1 rounded"
         >
           Search
         </button>

@@ -45,7 +45,7 @@ app.get("/discover", router);
 app.get("/genre-code", router);
 app.get("/around-you", router);
 app.get("/artist-details", router);
-app.get("/search", router);
+app.get("/song", router);
 app.get("/country", router);
 
 app.get("/getPlaylists", router);

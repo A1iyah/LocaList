@@ -87,41 +87,6 @@ export const addSongToPlaylist = async (req: any, res: any) => {
   }
 };
 
-// export const addSongToPlaylist = async (req: any, res: any) => {
-//   console.log("Request body:", req.body); // Log received data
-
-//   const { playlistId, song } = req.body;
-
-//   if (!song || !song.key || !song.title) {
-//     return res.status(400).send("Missing song information.");
-//   }
-
-//   try {
-//     const playlist = await PlaylistModel.findOne({ playlistId });
-
-//     if (!playlist) {
-//       return res.status(404).send("Playlist not found.");
-//     }
-
-//     // Check if the song already exists in the playlist
-//     const songExists = playlist.songs.some(
-//       (s: { key: string; title: string }) => s.key === song.key
-//     );
-
-//     if (songExists) {
-//       return res.status(409).send("Song already in playlist.");
-//     }
-
-//     playlist.songs.push(song);
-//     await playlist.save();
-
-//     return res.status(200).json(playlist);
-//   } catch (error) {
-//     console.error("Server error - addSongToPlaylist:", error);
-//     return res.status(500).send("Internal server error.");
-//   }
-// };
-
 export const deletePlaylist = async (req: any, res: any) => {
   try {
     const { playlistId } = req.params;
@@ -148,23 +113,26 @@ export const deletePlaylist = async (req: any, res: any) => {
 };
 
 export const deleteSongFromPlaylist = async (req: any, res: any) => {
-  const { playlistId, songId } = req.params;
-
   try {
-    const playlist = await PlaylistModel.findOne({ playlistId });
-    if (!playlist) {
-      return res.status(404).send("Playlist not found.");
+    const { playlistId } = req.params;
+    const { songId } = req.query;
+
+    console.log("Deleting song:", songId, "from playlist:", playlistId);
+
+    const updateResult = await PlaylistModel.updateOne(
+      { playlistId },
+      { $pull: { songs: { id: songId } } }
+    );
+
+    console.log("Update Result:", updateResult);
+
+    if (updateResult.modifiedCount === 0) {
+      return res.status(404).send("Song not found in the playlist.");
     }
 
-    const updatedSongs = playlist.songs.filter((song) => song.key !== songId);
-
-    playlist.songs = updatedSongs;
-
-    await playlist.save();
-
-    res.send("Song deleted successfully.");
+    return res.status(200).send("Song deleted successfully.");
   } catch (error) {
-    console.error("Server error - deleteSongFromPlaylist : ", error);
+    console.log("Server error", error);
     return res.status(500).send("Internal server error.");
   }
 };

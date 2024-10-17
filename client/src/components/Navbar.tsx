@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import { links } from "../utils/constants";
 import CountrySearchBar from "./CountrySearchBar";
-import SongSearch from "./SongSearch";
+// import SongSearchBar from "./SongSearchBar";
 
 import { RiCloseLine } from "react-icons/ri";
 import { HiOutlineMenu } from "react-icons/hi";
@@ -11,7 +11,7 @@ import { FaSignOutAlt } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 
 const NavLinks = ({ handleClick }: any) => (
-  <div className="flex items-center mr-[50px]" id="nav-links">
+  <div className="flex items-center mr-[30px]" id="nav-links">
     {links.map((item) => (
       <NavLink
         key={item.name}
@@ -31,12 +31,17 @@ const NavLinks = ({ handleClick }: any) => (
 const Navbar = () => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchType, setSearchType] = useState("country");
+  const [showSearchBar, setShowSearchBar] = useState(false);
+  // const [searchType, setSearchType] = useState("country");
   const { state: authState, logout } = useContext(AuthContext);
 
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  const toggleSearchBar = () => {
+    setShowSearchBar((prev: any) => !prev);
   };
 
   return (
@@ -56,9 +61,14 @@ const Navbar = () => {
           <NavLinks />
         </div>
 
-        <FiSearch aria-hidden="true" className="w-5 h-5 mr-2 mt-4" />
+        <FiSearch
+          aria-hidden="true"
+          className="w-5 h-5 mr-2 mt-4 cursor-pointer"
+          onClick={toggleSearchBar}
+        />
+        {showSearchBar && <CountrySearchBar />}
 
-        <div id="search-form">
+        {/* <div id="search-form">
           <select
             value={searchType}
             onChange={(e) => setSearchType(e.target.value)}
@@ -72,10 +82,10 @@ const Navbar = () => {
             </option>
           </select>
 
-          {searchType === "country" ? <CountrySearchBar /> : <SongSearch />}
-        </div>
+          {searchType === "song" ? <SongSearchBar /> : <CountrySearchBar />}
+        </div> */}
 
-        <div className="absolute right-5 top-3">
+        <div className="absolute right-8 top-3">
           <div className="flex items-center space-x-2">
             <div className="user-info">
               <p>{authState.username}</p>

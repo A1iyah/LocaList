@@ -12,32 +12,33 @@ const Search = () => {
   const { searchTerm } = useParams();
   const { activeSong, isPlaying } = useSelector((state: any) => state.player);
   const [searchData, setSearchData] = useState<any[]>([]);
-
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchArtistDetails = async () => {
-      setIsFetching(true);
+  console.log("Search data before mapping:", searchData);
 
+  useEffect(() => {
+    const fetchSongData = async () => {
+      setIsFetching(true);
       try {
-        const response = await axiosClient.get(`/search`, {
-          params: {
-            searchTerm,
-          },
+        const response = await axiosClient.get(`/song`, {
+          params: { searchTerm },
         });
 
-        setSearchData(response.data.tracks.hits);
+        const responseData = response.data ? response.data : response;
+        setSearchData(responseData);
+        console.log(responseData);
 
         setIsFetching(false);
       } catch (error) {
-        setError("Error fetching artist details");
+        console.error("Error fetching songs:", error);
+        setError("Error fetching songs");
         setIsFetching(false);
       }
     };
 
     if (searchTerm) {
-      fetchArtistDetails();
+      fetchSongData();
     }
   }, [searchTerm]);
 
@@ -48,25 +49,32 @@ const Search = () => {
     <PageWrapper>
       <div className="w-full" id="search-page">
         <h2 className="text-4xl text-left font-thin ml-10 mb-10 mt-10">
-          Showing results for -
-          <span className="text-3xl pl-2">" {searchTerm} "</span>
+          {searchData.length > 0 ? "Popular" : "No results found for"}
+          <span className="text-3xl pl-2"> {searchTerm} </span>
+          {searchData.length > 0 ? "Songs" : ""}
         </h2>
 
         <div className="flex flex-wrap justify-center gap-8 pb-28 animate-slideup">
-          {searchData.map((song: any, i: any) => (
-            <div key={`searchResult_${song.key}_${i}`}>
-              <PlaylistDropdown key={`playlist_${song.key}_${i}`} song={song} />
-
-              <SongCard
-                key={`song_${song.key}_${i}`}
-                song={song.track || song}
-                i={i}
-                isPlaying={isPlaying}
-                activeSong={activeSong}
-                data={searchData}
-              />
-            </div>
-          ))}
+          {searchData.map((song: any, i: number) => {
+            console.log("Current song data:", song);
+            const track = song.track || song;
+            return (
+              <div key={`searchResult_${track?.key || i}`}>
+                <PlaylistDropdown
+                  key={`playlist_${track?.key || i}`}
+                  song={track}
+                />
+                <SongCard
+                  key={`song_${track?.key || i}`}
+                  song={track}
+                  i={i}
+                  isPlaying={isPlaying}
+                  activeSong={activeSong}
+                  data={searchData}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </PageWrapper>

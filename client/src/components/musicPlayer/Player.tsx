@@ -20,10 +20,10 @@ const Player = ({
     }
 
     if (ref.current) {
-      ref.current.pause();
-
       if (isPlaying) {
         ref.current.play();
+      } else {
+        ref.current.pause();
       }
     }
   }, [activeSong, isPlaying]);
@@ -41,21 +41,22 @@ const Player = ({
   }, [seekTime]);
 
   useEffect(() => {
-    if (ref.current) {
-      if (isPlaying && ref.current.readyState >= 2) {
-        ref.current.play();
-      } else if (!isPlaying) {
-        ref.current.pause();
-      } else {
-        const playAfterLoadedData = () => {
-          if (isPlaying) {
-            ref.current?.play();
-          }
-          ref.current?.removeEventListener("loadeddata", playAfterLoadedData);
-        };
-        ref.current.addEventListener("loadeddata", playAfterLoadedData);
+    const handleLoadedData = () => {
+      if (isPlaying) {
+        ref.current?.play();
       }
+    };
+
+    if (ref.current) {
+      ref.current.addEventListener("loadeddata", handleLoadedData);
     }
+
+    // Cleanup on unmount
+    return () => {
+      if (ref.current) {
+        ref.current.removeEventListener("loadeddata", handleLoadedData);
+      }
+    };
   }, [isPlaying]);
 
   return (

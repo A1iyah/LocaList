@@ -22,3 +22,35 @@ export const getSongDetails = (song: any) => {
 
   return { coverArtUrl, songTitle, artistName, songKey };
 };
+
+interface DifferentSong {
+  track: {
+    artists: Array<{ adamid: string }>;
+    id: string;
+    hub: {
+      type: string;
+      image: string;
+      actions: Array<any>;
+    };
+    images: {
+      background: string;
+      coverart: string;
+      coverarthq: string;
+    };
+    key: string;
+    subtitle: string;
+    title: string;
+    url: string;
+  };
+}
+
+export const getDifferentSongDetails = (song: DifferentSong) => {
+  if (!song || !song.track) return {};
+
+  const songKey = song.track.key;
+  const coverArtUrl = song.track.images.coverart;
+  const songTitle = song.track.title;
+  const artistName = song.track.subtitle;
+
+  return { coverArtUrl, songTitle, artistName, songKey };
+};
