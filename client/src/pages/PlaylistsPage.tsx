@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosClient } from "../utils/apiClient";
 import { AuthContext } from "../context/AuthProvider";
@@ -22,6 +22,7 @@ interface PlaylistData {
 
 const PlaylistsPage = () => {
   const navigate = useNavigate();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [playlists, setPlaylists] = useState<PlaylistData[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
@@ -34,6 +35,12 @@ const PlaylistsPage = () => {
   useEffect(() => {
     fetchPlaylists();
   }, []);
+
+  useEffect(() => {
+    if (showCreateForm && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showCreateForm]);
 
   const showMessage = (text: any) => {
     setMessage(text);
@@ -76,23 +83,43 @@ const PlaylistsPage = () => {
     }
   };
 
-  const moveToPlaylistDetails = (playlistId: string) => {
-    console.log("moved to playlist details", playlistId);
-    navigate(`/playlistsDetails/${playlistId}`);
+  const handleCreatePlaylistOnEnter = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      handleCreatePlaylist();
+    }
   };
 
-  const handleDeletePlaylist = async (playlistId: string) => {
+  const handleDeletePlaylist = async (
+    playlistId: string,
+    event: React.MouseEvent
+  ) => {
+    event.stopPropagation();
+
     try {
       await axiosClient.delete(`/deletePlaylist/${playlistId}`, {
         params: { userId: authState.userId },
       });
 
       showMessage("Playlist Deleted.");
-      fetchPlaylists();
+
+      // Fetch the playlists again to check if any are left
+      await fetchPlaylists();
+
+      // If no playlists are left, reset the state
+      if (playlists.length === 0) {
+        setPlaylists([]);
+      }
     } catch (error) {
       console.error("Delete playlist error", error);
       setError("Error deleting playlist");
     }
+  };
+
+  const moveToPlaylistDetails = (playlistId: string) => {
+    console.log("moved to playlist details", playlistId);
+    navigate(`/playlistsDetails/${playlistId}`);
   };
 
   const closeWindow = () => {
@@ -128,9 +155,9 @@ const PlaylistsPage = () => {
                       className="relative w-full flex flex-row hover:bg-darkerBlue bg-darker py-2 p-4 rounded-lg cursor-pointer mb-2"
                     >
                       <button
-                        className="hover:text-red pr-10"
-                        onClick={() =>
-                          handleDeletePlaylist(playlist.playlistId)
+                        className="hover:text-red pr-10 z-50"
+                        onClick={(e) =>
+                          handleDeletePlaylist(playlist.playlistId, e)
                         }
                       >
                         <MdOutlineDeleteForever size={24} />
@@ -164,6 +191,8 @@ const PlaylistsPage = () => {
                     placeholder="Playlist name"
                     value={newPlaylistName}
                     onChange={(e) => setNewPlaylistName(e.target.value)}
+                    onKeyDown={handleCreatePlaylistOnEnter}
+                    ref={inputRef}
                     className="border p-2 w-full text-black rounded-lg text-center"
                   />
                 </div>

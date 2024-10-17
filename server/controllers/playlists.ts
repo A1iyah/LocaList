@@ -1,12 +1,16 @@
 import { PlaylistModel } from "../models/playlistsModel";
 import { UserModel } from "../models/userModel";
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from "uuid";
 
 export const getPlaylists = async (req: any, res: any) => {
   try {
     const { userId } = req.query;
 
     const playlists = await PlaylistModel.find({ userId });
+
+    if (!playlists) {
+      return res.status(404).send("Playlist not found.");
+    }
 
     res.json(playlists);
   } catch (error) {
@@ -35,7 +39,7 @@ export const getPlaylistDetails = async (req: any, res: any) => {
 export const addNewPlaylist = async (req: any, res: any) => {
   try {
     const { playlistName, songs, userId } = req.body;
-    const playlistId = uuid();
+    const playlistId = uuidv4();
 
     if (!playlistName || !userId) {
       return res.status(400).send("Missing playlist name or user ID.");
@@ -68,6 +72,7 @@ export const addNewPlaylist = async (req: any, res: any) => {
 
 export const addSongToPlaylist = async (req: any, res: any) => {
   const { playlistId, song } = req.body;
+
   try {
     const playlist = await PlaylistModel.findOneAndUpdate(
       { playlistId },
@@ -81,6 +86,41 @@ export const addSongToPlaylist = async (req: any, res: any) => {
     return res.status(500).send("Internal server error.");
   }
 };
+
+// export const addSongToPlaylist = async (req: any, res: any) => {
+//   console.log("Request body:", req.body); // Log received data
+
+//   const { playlistId, song } = req.body;
+
+//   if (!song || !song.key || !song.title) {
+//     return res.status(400).send("Missing song information.");
+//   }
+
+//   try {
+//     const playlist = await PlaylistModel.findOne({ playlistId });
+
+//     if (!playlist) {
+//       return res.status(404).send("Playlist not found.");
+//     }
+
+//     // Check if the song already exists in the playlist
+//     const songExists = playlist.songs.some(
+//       (s: { key: string; title: string }) => s.key === song.key
+//     );
+
+//     if (songExists) {
+//       return res.status(409).send("Song already in playlist.");
+//     }
+
+//     playlist.songs.push(song);
+//     await playlist.save();
+
+//     return res.status(200).json(playlist);
+//   } catch (error) {
+//     console.error("Server error - addSongToPlaylist:", error);
+//     return res.status(500).send("Internal server error.");
+//   }
+// };
 
 export const deletePlaylist = async (req: any, res: any) => {
   try {

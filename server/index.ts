@@ -106,6 +106,7 @@ import cors from "cors";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { USERS_TOKENS, removeUserTokens } from "./utils/auth-middleware";
 import authMiddleware from "./utils/auth-middleware";
+import { rateLimitMiddleware } from "./utils/rate-limit";
 import router from "./routes";
 import * as dotenv from "dotenv";
 
@@ -133,6 +134,7 @@ app.use(cors());
 app.use(express.static("./client"));
 app.use("/images", express.static("./Images"));
 app.get("/favicon.ico", (req, res) => res.status(204));
+app.use(rateLimitMiddleware, router);
 
 app.post("/", router);
 app.post("/signup", router);
