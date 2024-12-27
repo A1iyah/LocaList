@@ -1,6 +1,5 @@
 # DISCLAIMER -
 
-search engines not working as of yet due to RapidApi changes.
 THIS VERSION IS NOT FINAL.
 
 # Run client locally:

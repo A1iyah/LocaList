@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { axiosClient } from "../utils/apiClient";
+import { AuthContext } from "../context/AuthProvider";
 import { genres } from "../utils/constants";
 import { selectGenreListId } from "../utils/playerSlice";
 import PageWrapper from "../context/PageWrapper";
@@ -10,56 +11,122 @@ import Loader from "../utils/Loader";
 import Error from "../utils/Error";
 import "../index.css";
 
+interface SongData {
+  id: string;
+  title: string;
+  artist: string;
+}
+
+interface PlaylistData {
+  playlistId: string;
+  playlistName: string;
+  songs: SongData[];
+}
+
 const Discover = () => {
   const dispatch = useDispatch();
+  const inputRef = useRef<HTMLInputElement>(null);
   const { activeSong, isPlaying } = useSelector((state: any) => state.player);
+  const { state: authState } = useContext(AuthContext);
   const [genreCode, setGenreCode] = useState("");
-  const genreTitle = genres.find(({ value }) => value === genreCode)?.title;
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [playlists, setPlaylists] = useState<PlaylistData[]>([]);
+  const [newPlaylistName, setNewPlaylistName] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+  const [message, setMessage] = useState("");
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    fetchPlaylists();
+  }, [newPlaylistName]);
+
+  const fetchPlaylists = async () => {
+    try {
+      const { data } = await axiosClient.get("/getPlaylists", {
+        params: { userId: authState.userId },
+      });
+
+      setPlaylists(data);
+    } catch (error) {
+      console.error("Error fetching playlists:", error);
+      setError("Error fetching playlists: " + error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const genreTitle =
+    genres.find(({ value }) => value === genreCode)?.title || "Pop";
+
+  useEffect(() => {
     const fetchSongs = async () => {
       setIsFetching(true);
+      setError("");
 
       try {
-        const response = await axiosClient.get(`/get-songs`, {
-          params: { country_code: "US" },
-        });
+        const endpoint = genreCode ? `/genre-code` : `/get-songs`;
+        const params = genreCode
+          ? { genreCode, countryCode: "US" }
+          : { country_code: "US" };
 
+        const response = await axiosClient.get(endpoint, { params });
         setData(response.data);
-        setIsFetching(false);
       } catch (error) {
+        console.error("Error fetching songs:", error);
         setError("Error fetching songs");
+      } finally {
         setIsFetching(false);
       }
     };
 
-    const fetchSongsByGenre = async () => {
-      setIsFetching(true);
-
-      try {
-        if (!genreCode) {
-          fetchSongs();
-          return;
-        }
-        const response = await axiosClient.get(
-          `/genre-code?genreCode=${genreCode}`
-        );
-
-        setData(response.data);
-        setIsFetching(false);
-      } catch (error) {
-        setError("discover client error");
-        setIsFetching(false);
-      }
-    };
-
-    fetchSongsByGenre();
+    fetchSongs();
   }, [genreCode]);
 
-  if (isFetching) return <Loader title="Loading Songs..." />;
+  const handleCreatePlaylist = async () => {
+    if (isCreating || !newPlaylistName.trim()) return;
+    setIsCreating(true);
+
+    try {
+      await axiosClient.post("/newPlaylist", {
+        playlistName: newPlaylistName,
+        songs: [],
+        userId: authState.userId,
+      });
+      showMessage("Playlist Created.");
+      fetchPlaylists();
+
+      setNewPlaylistName("");
+      setShowCreateForm(false);
+    } catch (error) {
+      console.error("Create playlist client error", error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleCreatePlaylistOnEnter = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      handleCreatePlaylist();
+    }
+  };
+
+  const closeWindow = () => {
+    setShowCreateForm(false);
+  };
+
+  const showMessage = (text: any) => {
+    setMessage(text);
+    setTimeout(() => {
+      setMessage("");
+    }, 1000);
+  };
+
+  if (isFetching) return <Loader title={`Loading Songs...`} />;
   if (error) return <Error />;
 
   return (
@@ -76,6 +143,47 @@ const Discover = () => {
             >
               Discover {genreTitle}
             </h2>
+
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="absolute right-44 top-30 p-2 bg-lowOpacity rounded-lg hover:bg-background"
+            >
+              +
+            </button>
+
+            {showCreateForm && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="relative bg-darker p-5 rounded-lg">
+                  <button
+                    onClick={closeWindow}
+                    className="absolute right-5 hover:text-red"
+                  >
+                    X
+                  </button>
+
+                  <h2 className="text-xl mb-4">Create New Playlist</h2>
+
+                  <div className="mt-2 mb-10 mx-4">
+                    <input
+                      type="text"
+                      placeholder="Playlist name"
+                      value={newPlaylistName}
+                      onChange={(e) => setNewPlaylistName(e.target.value)}
+                      onKeyDown={handleCreatePlaylistOnEnter}
+                      ref={inputRef}
+                      className="border p-2 w-full text-black rounded-lg text-center"
+                    />
+                  </div>
+
+                  <button
+                    className="bg-transparent hover:text-mainBlue text-white font-bold py-2 px-4 rounded absolute right-5 bottom-2"
+                    onClick={handleCreatePlaylist}
+                  >
+                    Create
+                  </button>
+                </div>
+              </div>
+            )}
 
             <select
               onChange={(e) => {
@@ -116,6 +224,12 @@ const Discover = () => {
             ))}
           </div>
         </div>
+
+        {message && (
+          <div className="fixed inset-0 z-50 flex justify-center items-center bg-lowOpacity">
+            <div className="bg-black text-white p-4 rounded-lg">{message}</div>
+          </div>
+        )}
       </PageWrapper>
     </>
   );

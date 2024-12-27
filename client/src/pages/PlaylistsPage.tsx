@@ -26,6 +26,7 @@ const PlaylistsPage = () => {
   const [playlists, setPlaylists] = useState<PlaylistData[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -51,35 +52,36 @@ const PlaylistsPage = () => {
 
   const fetchPlaylists = async () => {
     try {
-      const { data } = await axiosClient.get(`/getPlaylists`, {
+      const { data } = await axiosClient.get("/getPlaylists", {
         params: { userId: authState.userId },
       });
-
       setPlaylists(data);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching playlists:", error);
       setError("Error fetching playlists: " + error);
+    } finally {
       setLoading(false);
     }
   };
 
   const handleCreatePlaylist = async () => {
-    const userId = authState.userId;
+    if (isCreating || !newPlaylistName.trim()) return;
+    setIsCreating(true);
 
     try {
       await axiosClient.post("/newPlaylist", {
         playlistName: newPlaylistName,
         songs: [],
-        userId,
+        userId: authState.userId,
       });
-
-      showMessage("Playlist Added.");
+      showMessage("Playlist Created.");
       fetchPlaylists();
       setNewPlaylistName("");
       setShowCreateForm(false);
     } catch (error) {
-      console.log("Create playlist client error", error);
+      console.error("Create playlist client error", error);
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -96,19 +98,14 @@ const PlaylistsPage = () => {
     event: React.MouseEvent
   ) => {
     event.stopPropagation();
-
     try {
       await axiosClient.delete(`/deletePlaylist/${playlistId}`, {
         params: { userId: authState.userId },
       });
-
       showMessage("Playlist Deleted.");
-
-      await fetchPlaylists();
-
-      if (playlists.length === 0) {
-        setPlaylists([]);
-      }
+      setPlaylists((prevPlaylists) =>
+        prevPlaylists.filter((playlist) => playlist.playlistId !== playlistId)
+      );
     } catch (error) {
       console.error("Delete playlist error", error);
       setError("Error deleting playlist");
@@ -182,7 +179,7 @@ const PlaylistsPage = () => {
             </div>
           </div>
 
-          {showCreateForm && (
+          {/* {showCreateForm && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
               <div className="relative bg-darker p-5 rounded-lg">
                 <button
@@ -214,7 +211,7 @@ const PlaylistsPage = () => {
                 </button>
               </div>
             </div>
-          )}
+          )} */}
 
           {message && (
             <div className="fixed inset-0 z-50 flex justify-center items-center bg-lowOpacity">

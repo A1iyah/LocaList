@@ -35,19 +35,13 @@ export const getSongs = async (req: express.Request, res: express.Response) => {
 // For Discover
 export const getGenre = async (req: express.Request, res: express.Response) => {
   try {
-    let { genreCode } = req.query;
-
-    if (!genreCode || genreCode === "") {
-      genreCode = "pop";
-    }
+    const { genreCode = "POP", countryCode = "US" } = req.query;
 
     const response = await axiosServer.get(
-      `/v1/charts/genre-world?genre_code=${genreCode}`,
-      {}
+      `/v1/charts/genre-world?genre_code=${genreCode}&country_code=${countryCode}`
     );
 
     const limitedSongs = response.data.slice(0, 30);
-
     res.json(limitedSongs);
   } catch (error) {
     console.error("Error fetching genre:", error);

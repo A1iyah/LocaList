@@ -34,7 +34,6 @@ const PlaylistDropdown = ({ song }: PlaylistDropdownProps) => {
       const response = await axiosClient.get("/getPlaylists", {
         params: { userId: authState.userId },
       });
-
       setPlaylists(response.data);
     } catch (error) {
       console.error("Error fetching playlists:", error);
@@ -50,14 +49,19 @@ const PlaylistDropdown = ({ song }: PlaylistDropdownProps) => {
     const userId = authState.userId;
 
     try {
-      await axiosClient.post("/newPlaylist", {
+      const response = await axiosClient.post("/newPlaylist", {
         playlistName: newPlaylistName,
         songs: [],
         userId,
       });
 
+      const newPlaylistId = response.data.playlistId;
       showMessage("Playlist Created.");
+
+      await addSongToPlaylist(newPlaylistId);
+
       fetchPlaylists();
+
       setNewPlaylistName("");
       setShowPlaylists(false);
     } catch (error) {
@@ -81,10 +85,14 @@ const PlaylistDropdown = ({ song }: PlaylistDropdownProps) => {
     }
 
     try {
-      await axiosClient.post("/addSongToPlaylist", {
+      console.log("Adding song to playlist:", playlistId, songToAdd);
+
+      const response = await axiosClient.post("/addSongToPlaylist", {
         playlistId,
         song: songToAdd,
       });
+
+      console.log("Response from adding song:", response);
 
       const updatedPlaylist = {
         ...existingPlaylist,
@@ -146,7 +154,7 @@ const PlaylistDropdown = ({ song }: PlaylistDropdownProps) => {
               onClick={handleCreatePlaylist}
               className="dropdown-playlists rounded-lg"
             >
-              Create a playlist
+              Create Playlist
             </button>
           </div>
         </div>
