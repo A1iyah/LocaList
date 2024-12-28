@@ -1,5 +1,7 @@
 # DISCLAIMER -
 
+due to constant changed in Rapid APIs code, some features in this app may not work properly.
+im trying to keep up with the changes and change my code accordingly but there are no alerts from Rapid API when these changes occur so i keep going thought the code every once in a while and fix what i see.
 THIS VERSION IS NOT FINAL.
 
 # Run client locally:
