@@ -1,8 +1,8 @@
 # DISCLAIMER -
 
-due to constant changed in Rapid APIs code, some features in this app may not work properly.
-im trying to keep up with the changes and change my code accordingly but there are no alerts from Rapid API when these changes occur so i keep going thought the code every once in a while and fix what i see.
-THIS VERSION IS NOT FINAL.
+Please note that due to frequent updates and changes in Rapid API's code, certain features in this application may not function as expected. While I am actively working to adapt the code and address these changes, Rapid API does not provide advance notifications regarding updates. As a result, I periodically review and revise the code to resolve any issues I identify.
+
+This version of the application is not final and may undergo further updates to ensure optimal functionality. Thank you for your understanding.
 
 # Run client locally:
 
