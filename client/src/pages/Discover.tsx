@@ -4,6 +4,7 @@ import { axiosClient } from "../utils/apiClient";
 import { AuthContext } from "../context/AuthProvider";
 import { genres } from "../utils/constants";
 import { selectGenreListId } from "../utils/playerSlice";
+import usePlaylists from "../components/UsePlaylists";
 import PageWrapper from "../context/PageWrapper";
 import SongCard from "../components/SongCard";
 import PlaylistDropdown from "../components/PlaylistDropdown";
@@ -11,13 +12,13 @@ import Loader from "../utils/Loader";
 import Error from "../utils/Error";
 import "../index.css";
 
-interface SongData {
+export interface SongData {
   id: string;
   title: string;
   artist: string;
 }
 
-interface PlaylistData {
+export interface PlaylistData {
   playlistId: string;
   playlistName: string;
   songs: SongData[];
@@ -28,35 +29,17 @@ const Discover = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { activeSong, isPlaying } = useSelector((state: any) => state.player);
   const { state: authState } = useContext(AuthContext);
+  const { playlists, setPlaylists, fetchPlaylists } = usePlaylists(
+    authState.userId!
+  );
   const [genreCode, setGenreCode] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [playlists, setPlaylists] = useState<PlaylistData[]>([]);
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [message, setMessage] = useState("");
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetchPlaylists();
-  }, [newPlaylistName]);
-
-  const fetchPlaylists = async () => {
-    try {
-      const { data } = await axiosClient.get("/getPlaylists", {
-        params: { userId: authState.userId },
-      });
-
-      setPlaylists(data);
-    } catch (error) {
-      console.error("Error fetching playlists:", error);
-      setError("Error fetching playlists: " + error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const genreTitle =
     genres.find(({ value }) => value === genreCode)?.title || "Pop";
@@ -76,7 +59,7 @@ const Discover = () => {
         setData(response.data);
       } catch (error) {
         console.error("Error fetching songs:", error);
-        setError("Error fetching songs");
+        setError("Error fetching songs.");
       } finally {
         setIsFetching(false);
       }
@@ -97,7 +80,6 @@ const Discover = () => {
       });
       showMessage("Playlist Created.");
       fetchPlaylists();
-
       setNewPlaylistName("");
       setShowCreateForm(false);
     } catch (error) {
@@ -210,6 +192,8 @@ const Discover = () => {
                 <PlaylistDropdown
                   key={`playlist_${song.key}_${i}`}
                   song={song}
+                  playlists={playlists}
+                  setPlaylists={setPlaylists}
                 />
 
                 <SongCard

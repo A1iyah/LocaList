@@ -12,6 +12,7 @@ module.exports = {
         darker: "rgb(12 74 110)",
         lowOpacity: "#7ddbfb54",
         red: "#CD5C5C",
+        babyblue: "#89CFF0",
       },
       animation: {
         slideup: "slideup 1s ease-in-out",
@@ -48,6 +49,7 @@ module.exports = {
           "100%": { transform: "scale(0)" },
         },
       },
+      plugins: [require("tailwind-scrollbar-hide")],
     },
   },
 };

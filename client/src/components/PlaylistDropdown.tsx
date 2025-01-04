@@ -1,11 +1,13 @@
-import { useState, useEffect, useContext } from "react";
-import { axiosClient } from "../utils/apiClient";
-import { AuthContext } from "../context/AuthProvider";
+import { useState, useEffect, useContext, useRef } from "react";
 import { HiDotsHorizontal } from "react-icons/hi";
+import { AuthContext } from "../context/AuthProvider";
+import { axiosClient } from "../utils/apiClient";
+import { PlaylistData } from "../pages/Discover";
+import usePlaylists from "./UsePlaylists";
 import "../index.css";
 
 interface Song {
-  key: any;
+  key: string;
   id: string;
   title: string;
   subtitle: string;
@@ -14,96 +16,81 @@ interface Song {
 
 interface PlaylistDropdownProps {
   song: Song;
+  playlists: PlaylistData[];
+  setPlaylists: React.Dispatch<React.SetStateAction<PlaylistData[]>>;
 }
 
 const PlaylistDropdown = ({ song }: PlaylistDropdownProps) => {
-  const [playlists, setPlaylists] = useState([]);
-  const [showPlaylists, setShowPlaylists] = useState(false);
-  const [newPlaylistName, setNewPlaylistName] = useState("");
-  const [message, setMessage] = useState("");
   const { state: authState } = useContext(AuthContext);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [currentOpenDropdown, setCurrentOpenDropdown] = useState<string | null>(
+    null
+  );
+  const [message, setMessage] = useState("");
+
+  // Use the usePlaylists hook
+  const { playlists, setPlaylists } = usePlaylists(authState.userId!);
+
+  const handleDropdownToggle = () => {
+    setCurrentOpenDropdown((prev) => (prev === song.key ? null : song.key));
+  };
+
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setCurrentOpenDropdown(null);
+    }
+  };
 
   useEffect(() => {
-    if (authState.userId) {
-      fetchPlaylists();
-    }
-  }, [authState.userId]);
-
-  const fetchPlaylists = async () => {
-    try {
-      const response = await axiosClient.get("/getPlaylists", {
-        params: { userId: authState.userId },
-      });
-      setPlaylists(response.data);
-    } catch (error) {
-      console.error("Error fetching playlists:", error);
-    }
-  };
-
-  const handleCreatePlaylist = async () => {
-    if (!newPlaylistName.trim()) {
-      showMessage("Please enter a playlist name.");
-      return;
-    }
-
-    const userId = authState.userId;
-
-    try {
-      const response = await axiosClient.post("/newPlaylist", {
-        playlistName: newPlaylistName,
-        songs: [],
-        userId,
-      });
-
-      const newPlaylistId = response.data.playlistId;
-      showMessage("Playlist Created.");
-
-      await addSongToPlaylist(newPlaylistId);
-
-      fetchPlaylists();
-
-      setNewPlaylistName("");
-      setShowPlaylists(false);
-    } catch (error) {
-      console.log("Create playlist client error", error);
-    }
-  };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   const addSongToPlaylist = async (playlistId: string) => {
-    const songToAdd = song.track || song;
+    const generateUniqueKey = (song: Song) => `${song.id}-${song.title}`;
+
+    const songToAdd = {
+      ...(song.track || song),
+      key: song.key || generateUniqueKey(song.track || song),
+    };
 
     const playlistIndex = playlists.findIndex(
-      (p: any) => p.playlistId === playlistId
+      (p) => p.playlistId === playlistId
     );
     if (playlistIndex === -1) return;
 
-    const existingPlaylist: any = playlists[playlistIndex];
+    const existingPlaylist = playlists[playlistIndex];
+
     if (existingPlaylist.songs.some((s: any) => s.key === songToAdd.key)) {
       showMessage("X Song Was Already Added X");
-      setShowPlaylists(false);
+      setCurrentOpenDropdown(null);
       return;
     }
 
     try {
-      console.log("Adding song to playlist:", playlistId, songToAdd);
-
       const response = await axiosClient.post("/addSongToPlaylist", {
         playlistId,
         song: songToAdd,
       });
-
-      console.log("Response from adding song:", response);
 
       const updatedPlaylist = {
         ...existingPlaylist,
         songs: [...existingPlaylist.songs, songToAdd],
       };
 
-      const newPlaylists: any = [...playlists];
-      newPlaylists[playlistIndex] = updatedPlaylist;
-      setPlaylists(newPlaylists);
+      setPlaylists((prev) =>
+        prev.map((p: any) =>
+          p.playlistId === playlistId ? updatedPlaylist : p
+        )
+      );
+
       showMessage("Song Added to Playlist");
-      setShowPlaylists(false);
+      setCurrentOpenDropdown(null);
     } catch (error) {
       console.error("Error adding song to playlist:", error);
     }
@@ -115,48 +102,27 @@ const PlaylistDropdown = ({ song }: PlaylistDropdownProps) => {
   };
 
   return (
-    <div className="relative animate-slideup">
-      <button
-        onClick={() => setShowPlaylists(!showPlaylists)}
-        className="absolute z-10 right-2"
-      >
+    <div className="relative animate-slideup" ref={dropdownRef}>
+      <button onClick={handleDropdownToggle} className="absolute z-10 right-2">
         <HiDotsHorizontal size={23} />
       </button>
 
-      {showPlaylists && (
-        <div className="absolute top-5 right-3 bg-background rounded-lg shadow-lg z-20 p-4">
-          {playlists.length > 0 &&
-            playlists.map(
-              (playlist: {
-                playlistId: string;
-                playlistName: string;
-                songs: Song[];
-              }) => (
-                <div
-                  key={playlist.playlistId}
-                  className="dropdown-playlists rounded-lg mb-2"
-                  onClick={() => addSongToPlaylist(playlist.playlistId)}
-                >
-                  <button>{playlist.playlistName}</button>
-                </div>
-              )
-            )}
+      {currentOpenDropdown === song.key && (
+        <div className="absolute top-5 right-3 bg-background rounded-lg shadow-lg z-20 p-4 w-40 h-40 overflow-auto [&::-webkit-scrollbar]:w-[3px] [&::-webkit-scrollbar-thumb]:bg-babyblue [&::-webkit-scrollbar-thumb]:rounded-lg [&::-webkit-scrollbar-track]:bg-transparent ">
+          <p className="font-bold underline sticky text-slate-700">
+            Add to Playlist
+          </p>
 
-          <div>
-            <input
-              type="text"
-              placeholder="New playlist name"
-              value={newPlaylistName}
-              onChange={(e) => setNewPlaylistName(e.target.value)}
-              className="dropdown-input rounded-lg"
-            />
-            <button
-              onClick={handleCreatePlaylist}
-              className="dropdown-playlists rounded-lg"
-            >
-              Create Playlist
-            </button>
-          </div>
+          {playlists.length > 0 &&
+            playlists.map((playlist: any) => (
+              <div
+                key={playlist.playlistId}
+                className="dropdown-playlists rounded-lg mb-2"
+                onClick={() => addSongToPlaylist(playlist.playlistId)}
+              >
+                <button>{playlist.playlistName}</button>
+              </div>
+            ))}
         </div>
       )}
 
@@ -168,4 +134,5 @@ const PlaylistDropdown = ({ song }: PlaylistDropdownProps) => {
     </div>
   );
 };
+
 export default PlaylistDropdown;

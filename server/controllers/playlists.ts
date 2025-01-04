@@ -21,7 +21,11 @@ export const getPlaylists = async (req: any, res: any) => {
 
 export const getPlaylistDetails = async (req: any, res: any) => {
   try {
-    const playlistId = req.params.playlistId;
+    const { playlistId } = req.params;
+
+    if (!playlistId) {
+      return res.status(400).send("Missing playlistId in request parameters.");
+    }
 
     const playlist = await PlaylistModel.findOne({ playlistId: playlistId });
 
@@ -38,8 +42,8 @@ export const getPlaylistDetails = async (req: any, res: any) => {
 
 export const addNewPlaylist = async (req: any, res: any) => {
   try {
-    const { playlistName, songs, userId } = req.body;
-    const playlistId = uuidv4();
+    const { playlistName, songs = [], userId } = req.body;
+    // const playlistId = uuidv4();
 
     if (!playlistName || !userId) {
       return res.status(400).send("Missing playlist name or user ID.");
@@ -47,7 +51,7 @@ export const addNewPlaylist = async (req: any, res: any) => {
 
     let newPlaylist = new PlaylistModel({
       userId,
-      playlistId,
+      playlistId: uuidv4(),
       playlistName,
       songs: songs || [],
     });
@@ -55,15 +59,15 @@ export const addNewPlaylist = async (req: any, res: any) => {
     const savedPlaylist = await newPlaylist.save();
 
     const userUpdateResult = await UserModel.updateOne(
-      { userId: userId },
+      { userId },
       { $push: { playlists: savedPlaylist._id } }
     );
 
-    if (userUpdateResult.modifiedCount === 0) {
+    if (!userUpdateResult.modifiedCount) {
       throw new Error("Failed to link playlist to user.");
     }
 
-    res.status(200).send({ ok: true, playlistId: savedPlaylist._id });
+    res.status(200).send({ ok: true, playlistId: savedPlaylist.playlistId });
   } catch (error) {
     console.error("Server error - addNewPlaylist : ", error);
     return res.status(500).send("Internal server error.");
@@ -76,7 +80,7 @@ export const addSongToPlaylist = async (req: any, res: any) => {
   try {
     const playlist = await PlaylistModel.findOneAndUpdate(
       { playlistId },
-      { $push: { songs: song } },
+      { $addToSet: { songs: song } },
       { new: true }
     );
 
