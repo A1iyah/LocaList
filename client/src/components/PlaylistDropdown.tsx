@@ -91,6 +91,7 @@ const PlaylistDropdown = ({ song }: PlaylistDropdownProps) => {
 
       showMessage("Song Added to Playlist");
       setCurrentOpenDropdown(null);
+      return response;
     } catch (error) {
       console.error("Error adding song to playlist:", error);
     }

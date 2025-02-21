@@ -11,8 +11,7 @@ const LoginForm = ({ switchForm }: Props) => {
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
 
-  const { state: authState, dispatch: dispatchAuthContext } =
-    useContext(AuthContext);
+  const { dispatch: dispatchAuthContext } = useContext(AuthContext);
 
   const navigate = useNavigate();
 

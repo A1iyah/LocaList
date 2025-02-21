@@ -19,7 +19,7 @@ const SignupForm = ({ switchForm }: Props) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
-  const [formVisibility, setFormVisibility] = useState(false);
+  const [formVisibility, setFormVisibility]: any = useState(false);
   const [errors, setErrors] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -119,6 +119,7 @@ const SignupForm = ({ switchForm }: Props) => {
         >
           <button
             onClick={handleFormVisibility}
+            value={formVisibility}
             className="absolute top-3 right-5 text-white text-xl"
           >
             X

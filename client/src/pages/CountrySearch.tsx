@@ -19,9 +19,7 @@ const CountrySearch = () => {
 
   const { state: authState } = useContext(AuthContext);
 
-  const { playlists, setPlaylists, fetchPlaylists } = usePlaylists(
-    authState.userId!
-  );
+  const { playlists, setPlaylists } = usePlaylists(authState.userId!);
 
   useEffect(() => {
     const fetchSongs = async () => {

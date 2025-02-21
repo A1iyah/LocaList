@@ -33,7 +33,7 @@ const Navbar = () => {
   const { state: authState, logout } = useContext(AuthContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSearchBar, setShowSearchBar] = useState(false);
-  const [searchType, setSearchType] = useState("song");
+  const [searchType] = useState("song");
 
   const handleLogout = () => {
     logout();

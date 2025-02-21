@@ -19,9 +19,7 @@ const Search = () => {
 
   const { state: authState } = useContext(AuthContext);
 
-  const { playlists, setPlaylists, fetchPlaylists } = usePlaylists(
-    authState.userId!
-  );
+  const { playlists, setPlaylists } = usePlaylists(authState.userId!);
 
   console.log("Search data before mapping:", searchData);
 

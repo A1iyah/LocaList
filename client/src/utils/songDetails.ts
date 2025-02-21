@@ -1,14 +1,14 @@
-interface Song {
-  attributes: {
-    artwork: {
-      url: string;
-    };
+// interface Song {
+//   attributes: {
+//     artwork: {
+//       url: string;
+//     };
 
-    name: string;
-    key: number;
-    artistName: string;
-  };
-}
+//     name: string;
+//     key: number;
+//     artistName: string;
+//   };
+// }
 
 export const getSongDetails = (song: any) => {
   if (!song || !song.attributes) return {};
