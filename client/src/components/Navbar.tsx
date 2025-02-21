@@ -30,10 +30,10 @@ const NavLinks = ({ handleClick }: any) => (
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { state: authState, logout } = useContext(AuthContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSearchBar, setShowSearchBar] = useState(false);
-  // const [searchType, setSearchType] = useState("country");
-  const { state: authState, logout } = useContext(AuthContext);
+  const [searchType, setSearchType] = useState("song");
 
   const handleLogout = () => {
     logout();
@@ -66,24 +66,24 @@ const Navbar = () => {
           className="w-5 h-5 mr-2 mt-4 cursor-pointer"
           onClick={toggleSearchBar}
         />
-        {showSearchBar && <CountrySearchBar />}
+        {showSearchBar && (
+          <div className="flex flex-row ml-4" id="search-form">
+            {/* <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              className="search-btn p-2 text-black rounded-md"
+            >
+              <option value="country" className="text-black">
+                Country
+              </option>
+              <option value="song" className="text-black">
+                Song / Artist
+              </option>
+            </select> */}
 
-        {/* <div id="search-form">
-          <select
-            value={searchType}
-            onChange={(e) => setSearchType(e.target.value)}
-            className="search-btn"
-          >
-            <option value="country" className="text-black">
-              Country
-            </option>
-            <option value="song" className="text-black">
-              Song / Artist
-            </option>
-          </select>
-
-          {searchType === "song" ? <SongSearchBar /> : <CountrySearchBar />}
-        </div> */}
+            {searchType && <CountrySearchBar />}
+          </div>
+        )}
 
         <div className="absolute right-8 top-3">
           <div className="flex items-center space-x-2">

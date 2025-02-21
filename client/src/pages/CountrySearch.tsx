@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { AuthContext } from "../context/AuthProvider";
 import { axiosClient } from "../utils/apiClient";
+import usePlaylists from "../components/UsePlaylists";
 import PageWrapper from "../context/PageWrapper";
 import SongCard from "../components/SongCard";
 import PlaylistDropdown from "../components/PlaylistDropdown";
@@ -15,20 +17,26 @@ const CountrySearch = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState("");
 
+  const { state: authState } = useContext(AuthContext);
+
+  const { playlists, setPlaylists, fetchPlaylists } = usePlaylists(
+    authState.userId!
+  );
+
   useEffect(() => {
     const fetchSongs = async () => {
       setIsFetching(true);
-
       try {
-        const response = await axiosClient.get(`/country`, {
+        const response = await axiosClient.get("/country", {
           params: { country_code: countryCode },
         });
 
-        const responseData = response.data ? response.data : response;
-        setSearchData(responseData);
+        console.log("Country API Response:", response.data);
 
+        setSearchData(response.data);
         setIsFetching(false);
       } catch (error) {
+        console.error("Error fetching country songs:", error);
         setError("Error fetching songs from the country");
         setIsFetching(false);
       }
@@ -54,7 +62,12 @@ const CountrySearch = () => {
         <div className="flex flex-wrap justify-center gap-8 pb-28 animate-slideup">
           {searchData.map((song: any, i) => (
             <div key={`searchResult_${song.key}_${i}`}>
-              <PlaylistDropdown key={`playlist_${song.key}_${i}`} song={song} />
+              <PlaylistDropdown
+                key={`playlist_${song.key}_${i}`}
+                song={song}
+                playlists={playlists}
+                setPlaylists={setPlaylists}
+              />
 
               <SongCard
                 key={`song_${song.key}_${i}`}

@@ -42,7 +42,7 @@ const SignupForm = ({ switchForm }: Props) => {
     setFormVisibility(false);
   };
 
-  const submit = async (evt: any) => {
+  const submit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     const validationErrors = formRegisterValidation({
@@ -115,6 +115,7 @@ const SignupForm = ({ switchForm }: Props) => {
         <form
           className="absolute top-0 left-0 bg-[#5a5a5a7e] h-screen w-[300px]"
           id="form"
+          onSubmit={submit}
         >
           <button
             onClick={handleFormVisibility}
@@ -268,7 +269,7 @@ const SignupForm = ({ switchForm }: Props) => {
           </div>
 
           <div className="buttonSection">
-            <button className="submitBtn" type="submit" onClick={submit}>
+            <button className="submitBtn" type="submit">
               Signup
             </button>
 

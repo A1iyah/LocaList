@@ -106,21 +106,35 @@ export const getSearch = async (
   res: express.Response
 ) => {
   try {
-    let { searchTerm } = req.query;
+    let searchTerm = req.query.searchTerm as string;
 
-    if (!searchTerm || searchTerm === "") {
-      searchTerm = " Not Found ";
+    if (!searchTerm || searchTerm.trim() === "") {
+      return res.status(400).json({ error: "Search term is required." });
     }
 
-    const response = await axiosServer.get(
-      `/v1/search/multi?search_type=SONGS_ARTISTS&query=${searchTerm}`,
-      {}
-    );
+    searchTerm = encodeURIComponent(searchTerm.trim());
 
-    const limitedSongs = response.data.tracks.hits || [];
-    res.json(limitedSongs.slice(0, 30));
-  } catch (error) {
-    console.error("Error fetching genre:", error);
-    res.status(500).send({ error: "Internal Server Error" });
+    console.log(`Fetching search results for: ${searchTerm}`);
+
+    const response = await axiosServer.get("/v1/search/suggest", {
+      params: { query: searchTerm },
+    });
+
+    console.log("API Response:", JSON.stringify(response.data, null, 2));
+
+    const tracks =
+      response.data?.tracks?.hits?.map((hit: any) => hit.track) || [];
+
+    console.log("Processed Tracks:", tracks);
+
+    res.json(tracks.slice(0, 30));
+  } catch (error: any) {
+    console.error(
+      "Error fetching search results:",
+      error.response?.data || error.message
+    );
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// `https://shazam-core.p.rapidapi.com/v1/search/suggest?query=mask`

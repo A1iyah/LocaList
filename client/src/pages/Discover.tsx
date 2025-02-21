@@ -108,7 +108,7 @@ const Discover = () => {
     }, 1000);
   };
 
-  if (isFetching) return <Loader title={`Loading Songs...`} />;
+  if (isFetching) return <Loader title={"Loading Songs..."} />;
   if (error) return <Error />;
 
   return (

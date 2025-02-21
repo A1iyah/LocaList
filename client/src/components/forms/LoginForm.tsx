@@ -38,7 +38,7 @@ const LoginForm = ({ switchForm }: Props) => {
     }
   };
 
-  const submit = async (evt: any) => {
+  const submit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     try {
@@ -71,6 +71,7 @@ const LoginForm = ({ switchForm }: Props) => {
       <form
         className="absolute top-0 left-0 bg-[#5a5a5a7e] h-screen w-[300px]"
         id="form"
+        onSubmit={submit}
       >
         <button
           id="closeButton"
@@ -121,7 +122,7 @@ const LoginForm = ({ switchForm }: Props) => {
           </div>
 
           <div className="buttonSection mt-5">
-            <button className="submitBtn" type="submit" onClick={submit}>
+            <button className="submitBtn" type="submit">
               Login
             </button>
 

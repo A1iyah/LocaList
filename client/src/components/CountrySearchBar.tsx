@@ -23,7 +23,7 @@ const CountrySearchBar = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-3" id="search-form">
+    <form onSubmit={handleSubmit} id="search-form">
       <div className="flex flex-row justify-start">
         <input
           name="country-field"

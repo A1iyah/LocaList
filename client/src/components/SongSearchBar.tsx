@@ -6,20 +6,23 @@ const SongSearchBar = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleSubmit = (evt: any) => {
+  const handleSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
     if (searchTerm) {
       navigate(`/song/${searchTerm}`);
     } else {
       alert("Please enter a search term");
     }
+
+    console.log("search bar", searchTerm);
   };
 
   console.log("Search term before navigating:", searchTerm);
 
   return (
     <form onSubmit={handleSubmit} className="mt-3" id="search-form">
-      <div className="flex flex-row justify-start items-center">
+      <div className="flex flex-row justify-start">
         <input
           name="search-field"
           id="search-field"
@@ -29,14 +32,13 @@ const SongSearchBar = () => {
           value={searchTerm}
           onChange={(evt) => setSearchTerm(evt.target.value)}
         />
+        <button
+          type="submit"
+          className="ml-2 hover:text-mainBlue text-white font-bold py-2 px-4 rounded"
+        >
+          Search
+        </button>
       </div>
-
-      <button
-        type="submit"
-        className="ml-2 hover:text-mainBlue text-white font-bold py-2 px-4 rounded"
-      >
-        Search
-      </button>
     </form>
   );
 };
